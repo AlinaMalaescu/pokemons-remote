@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from 'react'
 import state from './AtomStates';
 import { useAtom } from 'jotai';
 
+
 export default function FightingPokemons({ pokemons, setPokemons }) {
 
     const [pokemonData, setPokemonData] = useAtom(state.pokemonData);
     const [fightersList, setFightersList] = useAtom(state.fightersList);
     const [fightingPokemons, setFightingPokemons] = useAtom(state.fightingPokemons);
+    
 
     useEffect(() => {
         setFightingPokemons(pokemonData.filter(pokemon => pokemon.experience <= 70).sort((a, b) => (a.experience - b.experience)))

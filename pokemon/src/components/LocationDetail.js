@@ -6,15 +6,16 @@ export default function LocationDetail({locationsList, selectedLocation}) {
 
     const [opponentPokemon, setopponentPokemon] = useState({});
 
-    const [pokemonData, setPokemonData] = useAtom(state.pokemonData);
+    // const [pokemonData, setPokemonData] = useAtom(state.pokemonData);
     const [fightersList, setFightersList] = useAtom(state.fightersList);
-    const [fightingPokemons, setFightingPokemons] = useAtom(state.fightingPokemons);
+    // const [fightingPokemons, setFightingPokemons] = useAtom(state.fightingPokemons);
     const [selectedPLayer, setSelectedPlayer] = useState(null);
     const [hp, setHp] = useState({})
     const [turn, setTurn] = useState('player');
     const [gameStatus, setGameStatus] = useState(null);
+    const [gameOver, setGameOver] = useState(null);
     const enemyRef = useRef(null)
-    const playerRef = useRef(null)
+    const playerRef = useRef(null);
 
     useEffect(() => {
         fetch(`https://pokeapi.co/api/v2/location-area/${selectedLocation}/`)
@@ -64,10 +65,12 @@ export default function LocationDetail({locationsList, selectedLocation}) {
         } else {
             let damage =  ((((2/5+2)*opponentPokemon.attack*60/selectedPLayer.defense)/50)+2)*Math.floor(Math.random()*(255-217 +1)+ 217)/255; 
             let newValue = Math.round(selectedPLayer.hp - damage);
-            if (newValue <= 0) {console.log('You lost!');
-            playerRef.current.value= 0; 
-            setGameStatus('loss');
+            if (newValue <= 0) {
+                console.log('You lost!');
+                playerRef.current.value= 0; 
+                setGameStatus('loss');
             let removePokemon = fightersList.filter(pokemon => pokemon.id !== selectedPLayer.id);
+            if (removePokemon.length === 0) setGameOver(true);
             setFightersList(removePokemon);
             return;}
             setSelectedPlayer({...selectedPLayer, hp: newValue});
@@ -79,13 +82,26 @@ export default function LocationDetail({locationsList, selectedLocation}) {
     }
 
   return (
-    opponentPokemon && fightersList && 
+    opponentPokemon && fightersList && !gameOver? 
     <div className="Battle">
-        <>{console.log(hp)}</>
+        
         <h1 id="locationName">{locationsList[selectedLocation -1].name.toUpperCase()}</h1>
-        {gameStatus === 'won' && <h1>YOU WON!</h1>}
-        {gameStatus === 'loss' && <h1>YOU LOST!</h1>}
+        {gameStatus === 'won' && <h1 className="won">YOU WON!</h1>}
+        {gameStatus === 'loss' && <h1 className="won">YOU LOST!</h1>}
         {!gameStatus && <button onClick={handleFight}>Start fight!</button>}
+
+        <div className='yourPlayers'>
+            {fightersList.map((fighter, index) => {
+
+                return <div key={index}>
+                    <h4>{fighter.name}</h4>
+                    <img src={fighter.photo}></img>
+                    <h5>HP:{fighter.hp} A:{fighter.attack} D:{fighter.defense}</h5>
+                    <button id={fighter.name} onClick={selectFighter}>Choose</button>
+                </div>
+            })}
+        </div>
+
         <div className="opponent">
             <progress max={hp.enemy} value={opponentPokemon.hp*1} ref={enemyRef} />
             <h2>{opponentPokemon.name}</h2>
@@ -97,18 +113,7 @@ export default function LocationDetail({locationsList, selectedLocation}) {
             <h1>{selectedPLayer.name}</h1>
             <img src={selectedPLayer.photo}></img>
             </div>}
-        <div className='yourPlayers'>
-            {fightersList.map((fighter, index) => {
 
-                return <div key={index}>
-                    <img src={fighter.photo}></img>
-                    <h4>{fighter.name}</h4>
-                    <h5>hp:{fighter.hp}/atk:{fighter.attack}/def:{fighter.defense}</h5>
-                    <button id={fighter.name} onClick={selectFighter}>Choose</button>
-                </div>
-            })}
-        </div>
-
-    </div>
+    </div> : <div className='gameover'><h1 id="gamoverH">GAME OVER!</h1></div>
   )
 }
