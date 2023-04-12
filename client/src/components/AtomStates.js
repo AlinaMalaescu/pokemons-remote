@@ -7,7 +7,8 @@ const state = {
     moreInfo: atom(false),
     pokemonData,
     fightersList: atom([]),
-    fightingPokemons: atom([])
+    fightingPokemons: atom([]),
+    loggedPlayer: atom(null)
 }
 
 export default state

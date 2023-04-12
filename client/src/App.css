@@ -498,7 +498,7 @@ td {
   right: 65%;
   left: 0;
   width: 50%;
-  padding: 20px;
+  padding: 0px;
   box-sizing: border-box;
 }
 
@@ -609,3 +609,7 @@ td {
   cursor: pointer;
 }
 
+.errorMessage {
+  color:white;
+  background-color: red;
+}
