@@ -5,7 +5,7 @@ const User = require("./model/UserList");
 require("dotenv").config();
 const { MONGO_URL } = process.env;
 if (!MONGO_URL) {
-    console.error("CHEY ERROR")
+    console.error("KEY ERROR")
     process.exit(1);
 }
 const cors = require("cors");
